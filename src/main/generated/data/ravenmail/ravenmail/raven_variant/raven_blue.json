@@ -1,0 +1,13 @@
+{
+  "asset_id": "ravenmail:entity/raven/raven_blue",
+  "color": 1513794,
+  "spawn_conditions": [
+    {
+      "condition": {
+        "type": "ravenmail:chance",
+        "chance": 0.04
+      },
+      "priority": 1
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "ravenmail",
+	"version": "${version}",
+	"name": "Raven Mail",
+	"description": "",
+	"authors": [
+		"Enderboy500"
+	],
+	"license": "ARR",
+	"icon": "assets/ravenmail/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.enderboy.ravenmail.RavenMail"
+		],
+		"fabric-datagen": [
+          "net.enderboy.ravenmail.data.RavenMailDataGenerator"
+		],
+		"client": [
+			"net.enderboy.ravenmail.client.RavenMailClient"
+		]
+	},
+	"mixins": [
+		"ravenmail.mixins.json"
+	],
+	"depends": {
+		"fabricloader": "*",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
