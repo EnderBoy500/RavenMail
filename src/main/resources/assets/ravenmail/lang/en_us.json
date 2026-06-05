@@ -1,5 +1,8 @@
 {
   "item.ravenmail.raven_spawn_egg": "Raven Spawn Egg",
 
-  "entity.ravenmail.raven": "Raven"
+  "entity.ravenmail.raven": "Raven",
+
+  "sounds.ravenmail.raven_ambience": "Raven Croaks",
+  "sounds.ravenmail.raven_hurt": "Raven Hurts"
 }

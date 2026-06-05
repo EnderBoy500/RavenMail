@@ -73,6 +73,8 @@ public class RavenModel extends EntityModel<RavenRenderState> {
 	@Override
 	public void setupAnim(RavenRenderState object) {
 		super.setupAnim(object);
+		if (object.isSitting) this.body.setPos(0, -0.5f,0);
+		else this.body.resetPose();
 		if (object.flying) this.flyingAnimation.applyWalk(object.walkAnimationPos, object.walkAnimationSpeed, 2, 2.5f);
 		else this.walkingAnimation.applyWalk(object.walkAnimationPos, object.walkAnimationSpeed, 2, 2.5f);
 	}

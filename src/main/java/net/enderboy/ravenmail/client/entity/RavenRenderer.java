@@ -36,6 +36,7 @@ public class RavenRenderer extends AgeableMobRenderer<Raven, RavenRenderState, R
         livingEntityRenderState.texture = livingEntity.getVariant().value().assetInfo().texturePath();
         RavenRenderState.extractHoldingEntityRenderState(livingEntity, livingEntityRenderState, this.itemModelResolver);
         livingEntityRenderState.flying = livingEntity.isFlying();
+        livingEntityRenderState.isSitting = livingEntity.isInSittingPose();
     }
 
     @Override

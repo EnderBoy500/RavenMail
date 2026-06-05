@@ -1,0 +1,17 @@
+{
+  "raven_ambience": {
+    "subtitles": "sounds.ravenmail.raven_ambience",
+    "sounds": [
+      "ravenmail:raven_croaks_1",
+      "ravenmail:raven_croaks_2",
+      "ravenmail:raven_croaks_3",
+      "ravenmail:raven_croaks_4"
+    ]
+  },
+  "raven_hurt": {
+    "subtitles": "sounds.ravenmail.raven_hurt",
+    "sounds": [
+      "ravenmail:raven_hurt"
+    ]
+  }
+}

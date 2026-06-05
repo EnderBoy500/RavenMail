@@ -10,6 +10,7 @@
 	"license": "ARR",
 	"icon": "assets/ravenmail/icon.png",
 	"environment": "*",
+	"accessWidener": "ravenmail.accesswidener",
 	"entrypoints": {
 		"main": [
 			"net.enderboy.ravenmail.RavenMail"

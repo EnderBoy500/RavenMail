@@ -1,5 +1,6 @@
 package net.enderboy.ravenmail.entity;
 
+import net.enderboy.ravenmail.RavenMail;
 import net.enderboy.ravenmail.RavenMailContent;
 import net.enderboy.ravenmail.entity.goal.AttackPestGoal;
 import net.enderboy.ravenmail.entity.goal.RavenDeliverGoal;
@@ -15,6 +16,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
@@ -49,6 +51,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
+
 public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnimal {
     private static final EntityDimensions BABY_DIMENSIONS = RavenMailContent.RAVEN.getDimensions().scale(0.7F).withEyeHeight(0.24F);
     private final SimpleContainer inventory = new SimpleContainer(1);
@@ -81,7 +85,7 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new TamableAnimal.TamableAnimalPanicGoal(1.25));
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(0, new RavenDeliverGoal(this));
+        this.goalSelector.addGoal(1, new RavenDeliverGoal(this));
         this.goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(1, new FollowOwnerGoal(this, 1.0, 5.0F, 1.0F));
@@ -207,6 +211,15 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
         ItemStack itemStack = player.getItemInHand(interactionHand);
+        if (this.isTame() && this.getOwner() != null && Objects.requireNonNull(this.getOwner()).isShiftKeyDown()) {
+            this.setOrderedToSit(!this.isInSittingPose());
+            return InteractionResult.SUCCESS;
+        }
+
+        if (this.isInSittingPose()) {
+            this.clearMovementThisTick();
+        }
+
         if (this.isBaby()) {
             return super.mobInteract(player, interactionHand);
         } else {
@@ -238,6 +251,16 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
                 return super.mobInteract(player, interactionHand);
             }
         }
+    }
+
+    @Override
+    protected @Nullable SoundEvent getAmbientSound() {
+        return RavenMailContent.RAVEN_AMBIENCE;
+    }
+
+    @Override
+    protected @Nullable SoundEvent getHurtSound(DamageSource damageSource) {
+        return RavenMailContent.RAVEN_HURT;
     }
 
     @Override

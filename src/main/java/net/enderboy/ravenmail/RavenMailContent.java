@@ -1,5 +1,6 @@
 package net.enderboy.ravenmail;
 
+import com.google.common.collect.MapMaker;
 import com.mojang.serialization.MapCodec;
 import net.enderboy.ravenmail.entity.Raven;
 import net.enderboy.ravenmail.entity.RavenVariant;
@@ -19,6 +20,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -31,6 +33,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
 
@@ -54,6 +57,8 @@ public interface RavenMailContent {
 
     TagKey<Biome> RAVEN_SPAWNS = TagKey.create(Registries.BIOME, Identifier.fromNamespaceAndPath(RavenMail.MOD_ID, "raven_spawns"));
 
+    SoundEvent RAVEN_AMBIENCE = RegistryHelper.registerSound("raven_hurt");
+    SoundEvent RAVEN_HURT = RegistryHelper.registerSound("raven_ambience");
 
     static void addRavenSpawns() {
         BiomeModifications.addSpawn(biomeSelector -> biomeSelector.hasTag(RAVEN_SPAWNS), MobCategory.CREATURE, RAVEN,
