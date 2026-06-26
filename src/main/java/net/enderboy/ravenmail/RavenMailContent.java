@@ -1,13 +1,16 @@
 package net.enderboy.ravenmail;
 
 import com.google.common.collect.MapMaker;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.enderboy.ravenmail.entity.Raven;
 import net.enderboy.ravenmail.entity.RavenVariant;
+import net.enderboy.ravenmail.item.RavenMasterOcarina;
 import net.enderboy500.enderlib.helper.RegistryHelper;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricTrackedDataRegistry;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
@@ -16,6 +19,7 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.Identifier;
@@ -45,6 +49,9 @@ public interface RavenMailContent {
             .clientTrackingRange(10));
 
     Item RAVEN_SPAWN_EGG = Items.registerSpawnEgg(RAVEN);
+    //Item RAVEN_MASTER_OCARINA = RegistryHelper.registerItem("raven_master_ocarina", RavenMasterOcarina::new, new Item.Properties().stacksTo(1));
+
+    DataComponentType<BlockPos> BLOCK_POS = RegistryHelper.registerDataComponent("block_pos", blockPosBuilder -> blockPosBuilder.persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC));
 
     ResourceKey<Registry<RavenVariant>> RAVEN_VARIANT = createRegistryKey("raven_variant");
     EntityDataSerializer<Holder<RavenVariant>> RAVEN_VARIANT_DATA = of("raven_variant", RavenVariant.STREAM_CODEC);

@@ -33,7 +33,7 @@ public class RavenDeliverGoal extends Goal {
         ItemStack stack = raven.getMainHandItem();
         if (raven.level().getServer() != null && !stack.isEmpty() && stack.is(ItemTags.BUNDLES) && stack.getCustomName() != null) {
             Player player = raven.level().getServer().getPlayerList().getPlayer(stack.getCustomName().getString());
-            if (player != null) {
+            if (player != null && raven.level().dimension() == player.level().dimension()) {
                 return true;
             } else {
                 return false;
@@ -48,7 +48,7 @@ public class RavenDeliverGoal extends Goal {
         ItemStack stack = raven.getMainHandItem();
         if (raven.level().getServer() != null && !stack.isEmpty() && stack.getCustomName() != null) {
             Player player = raven.level().getServer().getPlayerList().getPlayer(stack.getCustomName().getString());
-            if (player != null) {
+            if (player != null && raven.level().dimension() == player.level().dimension()) {
                 if (raven.distanceTo(player) <= 50) {
                     raven.getNavigation().moveTo(player, 1);
                 } else {

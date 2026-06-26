@@ -3,7 +3,7 @@
 	"id": "ravenmail",
 	"version": "${version}",
 	"name": "Raven Mail",
-	"description": "",
+	"description": "Ravens to deliver mail to your friends, if you have any...",
 	"authors": [
 		"Enderboy500"
 	],

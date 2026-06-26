@@ -39,13 +39,13 @@ public class RavenWanderGoal extends WaterAvoidingRandomFlyingGoal {
         BlockPos.MutableBlockPos mutableBlockPos2 = new BlockPos.MutableBlockPos();
 
         for (BlockPos blockPos2 : BlockPos.betweenClosed(
-                Mth.floor(this.mob.getX() - 3.0),
-                Mth.floor(this.mob.getY() - 6.0),
-                Mth.floor(this.mob.getZ() - 3.0),
-                Mth.floor(this.mob.getX() + 3.0),
-                Mth.floor(this.mob.getY() + 6.0),
-                Mth.floor(this.mob.getZ() + 3.0)
-        )) {
+                Mth.floor(this.mob.getX() - 5.0),
+                Mth.floor(this.mob.getY() - 9.0),
+                Mth.floor(this.mob.getZ() - 5.0),
+                Mth.floor(this.mob.getX() + 5.0),
+                Mth.floor(this.mob.getY() + 9.0),
+                Mth.floor(this.mob.getZ() + 5.0)
+        ))
             if (!blockPos.equals(blockPos2)) {
                 BlockState blockState = this.mob.level().getBlockState(mutableBlockPos2.setWithOffset(blockPos2, Direction.DOWN));
                 boolean bl = blockState.getBlock() instanceof LeavesBlock || blockState.is(BlockTags.LOGS);
@@ -53,7 +53,6 @@ public class RavenWanderGoal extends WaterAvoidingRandomFlyingGoal {
                     return Vec3.atBottomCenterOf(blockPos2);
                 }
             }
-        }
 
         return null;
     }
