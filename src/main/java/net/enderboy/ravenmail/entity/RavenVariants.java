@@ -19,6 +19,7 @@ public interface RavenVariants {
     ResourceKey<RavenVariant> BLUE = of("blue");
     ResourceKey<RavenVariant> RED = of("red");
     ResourceKey<RavenVariant> PURPLE = of("purple");
+    ResourceKey<RavenVariant> GOLD = of("gold");
 
     private static ResourceKey<RavenVariant> of(String path) {
         return of(Identifier.fromNamespaceAndPath(RavenMail.MOD_ID, "raven_" + path));

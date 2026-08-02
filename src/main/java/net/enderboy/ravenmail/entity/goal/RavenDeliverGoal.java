@@ -1,5 +1,6 @@
 package net.enderboy.ravenmail.entity.goal;
 
+import net.enderboy.ravenmail.RavenMailContent;
 import net.enderboy.ravenmail.entity.Raven;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,6 +16,7 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomFlyingGoal;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -31,9 +33,10 @@ public class RavenDeliverGoal extends Goal {
     @Override
     public boolean canUse() {
         ItemStack stack = raven.getMainHandItem();
-        if (raven.level().getServer() != null && !stack.isEmpty() && stack.is(ItemTags.BUNDLES) && stack.getCustomName() != null) {
-            Player player = raven.level().getServer().getPlayerList().getPlayer(stack.getCustomName().getString());
-            if (player != null && raven.level().dimension() == player.level().dimension()) {
+        Level level = raven.level();
+        if (level.getServer() != null && !stack.isEmpty() && stack.is(ItemTags.BUNDLES) && stack.getCustomName() != null) {
+            Player player = level.getServer().getPlayerList().getPlayer(stack.getCustomName().getString());
+            if (player != null && level.dimension() == player.level().dimension() && !raven.isInSittingPose()) {
                 return true;
             } else {
                 return false;
@@ -46,9 +49,10 @@ public class RavenDeliverGoal extends Goal {
     @Override
     public void tick() {
         ItemStack stack = raven.getMainHandItem();
-        if (raven.level().getServer() != null && !stack.isEmpty() && stack.getCustomName() != null) {
-            Player player = raven.level().getServer().getPlayerList().getPlayer(stack.getCustomName().getString());
-            if (player != null && raven.level().dimension() == player.level().dimension()) {
+        Level level = raven.level();
+        if (level.getServer() != null && !stack.isEmpty() && stack.getCustomName() != null) {
+            Player player = level.getServer().getPlayerList().getPlayer(stack.getCustomName().getString());
+            if (player != null && level.dimension() == player.level().dimension()) {
                 if (raven.distanceTo(player) <= 50) {
                     raven.getNavigation().moveTo(player, 1);
                 } else {
@@ -58,16 +62,6 @@ public class RavenDeliverGoal extends Goal {
         }
     }
 
-
-    boolean teleportTowards(Entity entity) {
-        Vec3 vec3 = new Vec3(raven.getX() - entity.getX(), raven.getY((double)0.5F) - entity.getEyeY(), raven.getZ() - entity.getZ());
-        vec3 = vec3.normalize();
-        double d = (double)16.0F;
-        double e = raven.getX() + (raven.getRandom().nextDouble() - (double)0.5F) * (double)8.0F - vec3.x * (double)16.0F;
-        double f = raven.getY() + (double)(raven.getRandom().nextInt(16) - 8) - vec3.y * (double)16.0F;
-        double g = raven.getZ() + (raven.getRandom().nextDouble() - (double)0.5F) * (double)8.0F - vec3.z * (double)16.0F;
-        return this.teleport(e, f, g, entity);
-    }
 
     private boolean teleport(double d, double e, double f, Entity entity) {
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(d, e, f);
@@ -81,9 +75,10 @@ public class RavenDeliverGoal extends Goal {
         }
 
         BlockState blockState = raven.level().getBlockState(mutableBlockPos);
-        boolean bl = blockState.blocksMotion();
-        boolean bl2 = blockState.getFluidState().is(FluidTags.WATER);
-        if (bl && !bl2) {
+
+        boolean stateBlocksMotion = blockState.blocksMotion();
+        boolean fluidIsWater = blockState.getFluidState().is(FluidTags.WATER);
+        if (stateBlocksMotion && !fluidIsWater) {
             boolean bl3 = raven.randomTeleport(a, b, c, true);
             return bl3;
         } else {

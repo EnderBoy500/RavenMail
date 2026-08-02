@@ -1,13 +1,11 @@
 package net.enderboy.ravenmail.entity;
 
-import net.enderboy.ravenmail.RavenMail;
 import net.enderboy.ravenmail.RavenMailContent;
 import net.enderboy.ravenmail.entity.goal.*;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -38,7 +36,6 @@ import net.minecraft.world.entity.variant.SpawnContext;
 import net.minecraft.world.entity.variant.VariantUtils;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -48,19 +45,17 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
-import java.util.function.Predicate;
 
 public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnimal {
     private static final EntityDimensions BABY_DIMENSIONS = RavenMailContent.RAVEN.getDimensions().scale(0.7F).withEyeHeight(0.24F);
     private final SimpleContainer inventory = new SimpleContainer(1);
     private static final ResourceKey<RavenVariant> DEFAULT_VARIANT;
     private static final EntityDataAccessor<Holder<RavenVariant>> DATA_VARIANT_ID;
+    public static final EntityDataAccessor<ItemStack> HELD_ITEM = SynchedEntityData.defineId(Raven.class, EntityDataSerializers.ITEM_STACK);
 
     public Raven(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -70,18 +65,17 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
         this.setPathfindingMalus(PathType.COCOA, -1.0F);
     }
 
-
     @Override
     public EntityDimensions getDefaultDimensions(Pose pose) {
         return this.isBaby() ? BABY_DIMENSIONS : super.getDefaultDimensions(pose);
     }
 
     public Holder<RavenVariant> getVariant() {
-        return (Holder)this.entityData.get(DATA_VARIANT_ID);
+        return this.entityData.get(DATA_VARIANT_ID);
     }
 
-    private void setVariant(Holder<RavenVariant> holder) {
-        this.entityData.set(DATA_VARIANT_ID, holder);
+    private void setVariant(Holder<RavenVariant> variantHolder) {
+        this.entityData.set(DATA_VARIANT_ID, variantHolder);
     }
 
     @Override
@@ -92,17 +86,15 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 2, true));
         this.goalSelector.addGoal(4, new TemptGoal(this, 1, (itemStack) -> itemStack.is(RavenMailContent.RAVEN_ATTRACTED_TO), false));
         this.goalSelector.addGoal(2, new RavenDeliverGoal(this));
-        this.goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 8));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 1.0, 5.0F, 1.0F));
-        this.goalSelector.addGoal(2, new RavenWanderGoal(this, 1.0));
-        this.goalSelector.addGoal(0, new BreedGoal(this, 1.0));
+        this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 1, 5, 1));
+        this.goalSelector.addGoal(2, new RavenWanderGoal(this, 1));
+        this.goalSelector.addGoal(0, new BreedGoal(this, 1));
         this.goalSelector.addGoal(1, new SearchAndCollectItemGoal(this));
         this.goalSelector.addGoal(2, new AttackPestGoal(this, Silverfish.class));
-        this.goalSelector.addGoal(3, new FollowMobGoal(this, 1.0, 3.0F, 7.0F));
+        this.goalSelector.addGoal(3, new FollowMobGoal(this, 1, 3, 7));
     }
-
-    public static final EntityDataAccessor<ItemStack> HELD_ITEM = SynchedEntityData.defineId(Raven.class, EntityDataSerializers.ITEM_STACK);
 
     @Override
     public boolean shouldTryTeleportToOwner() {
@@ -112,11 +104,11 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
     @Override
     public void tick() {
         super.tick();
-        AABB box = new AABB(blockPosition()).inflate(8);
+        AABB callToAttackSearchBox = new AABB(blockPosition()).inflate(8);
         if (level().getDifficulty().getId() >= 2) {
             if (getLastHurtByMob() != null && getOwner() == null && !isBaby()) {
                 setTarget(getLastHurtByMob());
-                for (Raven raven : level().getEntitiesOfClass(Raven.class, box)) {
+                for (Raven raven : level().getEntitiesOfClass(Raven.class, callToAttackSearchBox)) {
                     if (!raven.isBaby() && raven.getOwner() == null) raven.setTarget(this.getTarget());
                 }
             }
@@ -138,7 +130,7 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
 
     @Override
     public <T> @Nullable T get(DataComponentType<? extends T> dataComponentType) {
-        return (T)castComponentValue(dataComponentType, this.getVariant());
+        return castComponentValue(dataComponentType, this.getVariant());
     }
 
     protected void applyImplicitComponents(DataComponentGetter dataComponentGetter) {
@@ -148,7 +140,7 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
 
     protected <T> boolean applyImplicitComponent(DataComponentType<T> dataComponentType, T object) {
         if (dataComponentType == RavenMailContent.RAVEN_VARIANT_COMPONENT) {
-            this.setVariant((Holder)castComponentValue(RavenMailContent.RAVEN_VARIANT_COMPONENT, object));
+            this.setVariant(castComponentValue(RavenMailContent.RAVEN_VARIANT_COMPONENT, object));
             return true;
         } else {
             return super.applyImplicitComponent(dataComponentType, object);
@@ -188,9 +180,9 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
     @Override
     public void aiStep() {
         super.aiStep();
-        Vec3 vec3 = this.getDeltaMovement();
-        if (!this.onGround() && vec3.y < (double)0.0F) {
-            this.setDeltaMovement(vec3.multiply((double)1.0F, 0.6, (double)1.0F));
+        Vec3 deltaMovement = this.getDeltaMovement();
+        if (!this.onGround() && deltaMovement.y < (double)0.0F) {
+            this.setDeltaMovement(deltaMovement.multiply((double)1.0F, 0.6, (double)1.0F));
         }
     }
 
@@ -207,7 +199,7 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
     }
 
     @Override
-    public ItemStack getMainHandItem() {
+    public @NonNull ItemStack getMainHandItem() {
         return entityData.get(HELD_ITEM).copy();
     }
 
@@ -239,7 +231,7 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
         ItemStack itemStack = player.getItemInHand(interactionHand);
-        if (this.isTame() && this.getOwner() != null && Objects.requireNonNull(this.getOwner()).isShiftKeyDown()) {
+        if (this.isTame() && this.getOwner() != null && player == this.getOwner() && player.isShiftKeyDown()) {
             this.getNavigation().stop();
             this.setOrderedToSit(!this.isInSittingPose());
             return InteractionResult.SUCCESS;
@@ -308,14 +300,6 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
         }
     }
 
-    public boolean canAcceptFood() {
-        if (isInLove()) {
-            return true;
-        } else {
-            return inventory.getItem(0).is(RavenMailContent.RAVEN_FOOD);
-        }
-    }
-
     @Override
     public boolean isFood(ItemStack itemStack) {
         return itemStack.is(RavenMailContent.RAVEN_FOOD);
@@ -325,8 +309,8 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
     public Raven getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
         Raven raven = RavenMailContent.RAVEN.create(serverLevel, EntitySpawnReason.BREEDING);
         if (raven != null && ageableMob instanceof Raven raven2) {
-            int r = random.nextInt(0,3) + 1;
-            if (r == 1) {
+            int mutationChance = random.nextInt(0,9) + 1;
+            if (mutationChance == 4) {
                 VariantUtils.selectVariantToSpawn(SpawnContext.create(serverLevel, this.blockPosition()), RavenMailContent.RAVEN_VARIANT).ifPresent(raven::setVariant);
             } else {
                 if (this.random.nextBoolean()) {
@@ -335,7 +319,6 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
                     raven.setVariant(raven2.getVariant());
                 }
             }
-            System.out.println(r);
         }
         if (raven != null && this.isTame()) {
                 raven.setOwnerReference(this.getOwnerReference());
@@ -360,54 +343,6 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
     @Override
     public boolean isFlying() {
         return !this.onGround();
-    }
-
-    protected boolean teleport() {
-        if (!this.level().isClientSide() && this.isAlive()) {
-            double d = this.getX() + (this.getRandom().nextDouble() - (double)0.5F) * (double)64.0F;
-            double e = this.getY() + (double)(this.getRandom().nextInt(64) - 32);
-            double f = this.getZ() + (this.getRandom().nextDouble() - (double)0.5F) * (double)64.0F;
-            return this.teleport(d, e, f);
-        } else {
-            return false;
-        }
-    }
-
-    boolean teleportTowards(Entity entity) {
-        Vec3 vec3 = new Vec3(this.getX() - entity.getX(), this.getY((double)0.5F) - entity.getEyeY(), this.getZ() - entity.getZ());
-        vec3 = vec3.normalize();
-        double d = (double)16.0F;
-        double e = this.getX() + (this.getRandom().nextDouble() - (double)0.5F) * (double)8.0F - vec3.x * (double)16.0F;
-        double f = this.getY() + (double)(this.getRandom().nextInt(16) - 8) - vec3.y * (double)16.0F;
-        double g = this.getZ() + (this.getRandom().nextDouble() - (double)0.5F) * (double)8.0F - vec3.z * (double)16.0F;
-        return this.teleport(e, f, g);
-    }
-
-    private boolean teleport(double d, double e, double f) {
-        BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(d, e, f);
-
-        while(mutableBlockPos.getY() > this.level().getMinY() && !this.level().getBlockState(mutableBlockPos).blocksMotion()) {
-            mutableBlockPos.move(Direction.DOWN);
-        }
-
-        BlockState blockState = this.level().getBlockState(mutableBlockPos);
-        boolean bl = blockState.blocksMotion();
-        boolean bl2 = blockState.getFluidState().is(FluidTags.WATER);
-        if (bl && !bl2) {
-            Vec3 vec3 = this.position();
-            boolean bl3 = this.randomTeleport(d, e, f, true);
-            if (bl3) {
-                this.level().gameEvent(GameEvent.TELEPORT, vec3, GameEvent.Context.of(this));
-                if (!this.isSilent()) {
-                    this.level().playSound((Entity)null, this.xo, this.yo, this.zo, SoundEvents.ENDERMAN_TELEPORT, this.getSoundSource(), 1.0F, 1.0F);
-                    this.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
-                }
-            }
-
-            return bl3;
-        } else {
-            return false;
-        }
     }
 
     static {

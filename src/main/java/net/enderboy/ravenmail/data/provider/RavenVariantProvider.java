@@ -38,20 +38,10 @@ public class RavenVariantProvider extends FabricDynamicRegistryProvider {
         of(registerable, RavenVariants.BLUE, 0x171942,2/50f);
         of(registerable, RavenVariants.PURPLE, 0x442A54,0f);
         of(registerable, RavenVariants.RED, 0x54201F,0f);
+        of(registerable, RavenVariants.GOLD, 0x54201F,0f);
     }
 
-
-/*    public static SpawnPrioritySelectors createSpawnConditions(HolderSet<Biome> requiredBiomes) {
-        return SpawnPrioritySelectors.single(new BiomeCheck(requiredBiomes), 1);
-    }
-    public static SpawnPrioritySelectors createChanceConditions(float f) {
-        return SpawnPrioritySelectors.single(new ChanceSpawnCondition(f), 1);
-    }
-
-    private static void of(BootstrapContext<RavenVariant> registry, ResourceKey<RavenVariant> key, TagKey<Biome> biomeTag, float f) {
-        registry.register(key, new RavenVariant(new ClientAsset.ResourceTexture(key.identifier().withPrefix("entity/raven/")), new SpawnPrioritySelectors(List.of(createSpawnConditions(registry.lookup(Registries.BIOME).getOrThrow(biomeTag)), createChanceConditions(f)))));
-    }*/
     private static void of(BootstrapContext<RavenVariant> registry, ResourceKey<RavenVariant> key,int color,float f) {
-        registry.register(key, new RavenVariant(new ClientAsset.ResourceTexture(key.identifier().withPrefix("entity/raven/")), color, SpawnPrioritySelectors.single(new ChanceSpawnCondition(f), 1)));
+        registry.register(key, new RavenVariant(new ClientAsset.ResourceTexture(key.identifier().withPrefix("entity/raven/")),new ClientAsset.ResourceTexture(key.identifier().withPrefix("entity/raven/baby/")), color, SpawnPrioritySelectors.single(new ChanceSpawnCondition(f), 1)));
     }
 }

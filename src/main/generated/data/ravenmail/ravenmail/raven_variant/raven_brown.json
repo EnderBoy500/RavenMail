@@ -1,5 +1,6 @@
 {
   "asset_id": "ravenmail:entity/raven/raven_brown",
+  "asset_id_baby": "ravenmail:entity/raven/baby/raven_brown",
   "color": 3090473,
   "spawn_conditions": [
     {

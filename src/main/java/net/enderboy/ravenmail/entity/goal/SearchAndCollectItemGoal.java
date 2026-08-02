@@ -1,6 +1,5 @@
 package net.enderboy.ravenmail.entity.goal;
 
-import net.enderboy.ravenmail.RavenMail;
 import net.enderboy.ravenmail.RavenMailContent;
 import net.enderboy.ravenmail.entity.Raven;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -20,7 +19,7 @@ public class SearchAndCollectItemGoal extends Goal {
     public boolean canUse() {
         List<ItemEntity> itemEntities = raven.level().getEntitiesOfClass(ItemEntity.class, raven.getBoundingBox().inflate(10), itemEntity -> itemEntity.getItem().is(RavenMailContent.RAVEN_ATTRACTED_TO));
         if (itemEntities.isEmpty()) return false;
-        this.item = itemEntities.get(0);
+        this.item = itemEntities.getFirst();
         return raven.getInventory().isEmpty() && !raven.isInLove();
     }
 

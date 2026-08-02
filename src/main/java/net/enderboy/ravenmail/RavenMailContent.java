@@ -1,25 +1,16 @@
 package net.enderboy.ravenmail;
 
-import com.google.common.collect.MapMaker;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import net.enderboy.ravenmail.entity.Raven;
 import net.enderboy.ravenmail.entity.RavenVariant;
-import net.enderboy.ravenmail.item.RavenMasterOcarina;
 import net.enderboy500.enderlib.helper.RegistryHelper;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricTrackedDataRegistry;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.Identifier;
@@ -37,9 +28,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.concurrent.ConcurrentMap;
-import java.util.function.Function;
-
 
 public interface RavenMailContent {
     EntityType<Raven> RAVEN = RegistryHelper.registerEntity("raven", EntityType.Builder.of(Raven::new, MobCategory.CREATURE)
@@ -49,9 +37,6 @@ public interface RavenMailContent {
             .clientTrackingRange(10));
 
     Item RAVEN_SPAWN_EGG = Items.registerSpawnEgg(RAVEN);
-    //Item RAVEN_MASTER_OCARINA = RegistryHelper.registerItem("raven_master_ocarina", RavenMasterOcarina::new, new Item.Properties().stacksTo(1));
-
-    DataComponentType<BlockPos> BLOCK_POS = RegistryHelper.registerDataComponent("block_pos", blockPosBuilder -> blockPosBuilder.persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC));
 
     ResourceKey<Registry<RavenVariant>> RAVEN_VARIANT = createRegistryKey("raven_variant");
     EntityDataSerializer<Holder<RavenVariant>> RAVEN_VARIANT_DATA = of("raven_variant", RavenVariant.STREAM_CODEC);
@@ -62,13 +47,13 @@ public interface RavenMailContent {
     TagKey<Item> RAVEN_ATTRACTED_TO = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(RavenMail.MOD_ID, "raven_attracted_to"));
     TagKey<Item> CAN_BE_GIVEN_TO_RAVEN = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(RavenMail.MOD_ID, "can_be_given_to_raven"));
 
-    TagKey<Biome> RAVEN_SPAWNS = TagKey.create(Registries.BIOME, Identifier.fromNamespaceAndPath(RavenMail.MOD_ID, "raven_spawns"));
+    TagKey<Biome> HAS_RAVENS = TagKey.create(Registries.BIOME, Identifier.fromNamespaceAndPath(RavenMail.MOD_ID, "has_ravens"));
 
     SoundEvent RAVEN_AMBIENCE = RegistryHelper.registerSound("raven_hurt");
     SoundEvent RAVEN_HURT = RegistryHelper.registerSound("raven_ambience");
 
     static void addRavenSpawns() {
-        BiomeModifications.addSpawn(biomeSelector -> biomeSelector.hasTag(RAVEN_SPAWNS), MobCategory.CREATURE, RAVEN,
+        BiomeModifications.addSpawn(biomeSelector -> biomeSelector.hasTag(HAS_RAVENS), MobCategory.CREATURE, RAVEN,
                 100, 1, 5);
         SpawnPlacements.register(RAVEN, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
     }
@@ -80,18 +65,6 @@ public interface RavenMailContent {
     }
     static <T> ResourceKey<Registry<T>> createRegistryKey(String string) {
         return ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(RavenMail.MOD_ID,string));
-    }
-
-    static <T extends ParticleOptions> ParticleType<T> registerParticle(String string, boolean bl, final Function<ParticleType<T>, MapCodec<T>> function, final Function<ParticleType<T>, StreamCodec<? super RegistryFriendlyByteBuf, T>> function2) {
-        return Registry.register(BuiltInRegistries.PARTICLE_TYPE, string, new ParticleType<T>(bl) {
-            public MapCodec<T> codec() {
-                return function.apply(this);
-            }
-
-            public StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec() {
-                return function2.apply(this);
-            }
-        });
     }
 
     static void load() {

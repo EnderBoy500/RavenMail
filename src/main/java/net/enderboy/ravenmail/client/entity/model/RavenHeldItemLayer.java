@@ -1,7 +1,8 @@
-package net.enderboy.ravenmail.client.entity;
+package net.enderboy.ravenmail.client.entity.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.enderboy.ravenmail.client.entity.RavenRenderState;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;

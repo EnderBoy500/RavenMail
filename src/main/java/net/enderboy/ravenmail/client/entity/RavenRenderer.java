@@ -2,14 +2,13 @@ package net.enderboy.ravenmail.client.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.enderboy.ravenmail.RavenMail;
+import net.enderboy.ravenmail.client.entity.model.RavenHeldItemLayer;
+import net.enderboy.ravenmail.client.entity.model.RavenModel;
 import net.enderboy.ravenmail.entity.Raven;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.AgeableMobRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.entity.state.HoldingEntityRenderState;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.Identifier;
 
 @Environment(EnvType.CLIENT)
@@ -34,6 +33,7 @@ public class RavenRenderer extends AgeableMobRenderer<Raven, RavenRenderState, R
     public void extractRenderState(Raven livingEntity, RavenRenderState livingEntityRenderState, float f) {
         super.extractRenderState(livingEntity, livingEntityRenderState, f);
         livingEntityRenderState.texture = livingEntity.getVariant().value().assetInfo().texturePath();
+        livingEntityRenderState.textureBaby = livingEntity.getVariant().value().assetInfoBaby().texturePath();
         RavenRenderState.extractHoldingEntityRenderState(livingEntity, livingEntityRenderState, this.itemModelResolver);
         livingEntityRenderState.flying = livingEntity.isFlying();
         livingEntityRenderState.isSitting = livingEntity.isInSittingPose();
@@ -41,7 +41,8 @@ public class RavenRenderer extends AgeableMobRenderer<Raven, RavenRenderState, R
 
     @Override
     public Identifier getTextureLocation(RavenRenderState livingEntityRenderState) {
-        return livingEntityRenderState.texture;
+        if (livingEntityRenderState.isBaby) return livingEntityRenderState.textureBaby;
+        else return livingEntityRenderState.texture;
     }
 
     @Override

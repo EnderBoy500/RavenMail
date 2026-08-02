@@ -7,7 +7,11 @@
 	"authors": [
 		"Enderboy500"
 	],
-	"license": "ARR",
+	"contact": {
+		"homepage": "https://modrinth.com/mod/raven-mail",
+		"issues": "https://github.com/EnderBoy500/Issues/issues"
+	},
+	"license": "MIT",
 	"icon": "assets/ravenmail/icon.png",
 	"environment": "*",
 	"accessWidener": "ravenmail.accesswidener",

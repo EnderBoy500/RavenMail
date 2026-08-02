@@ -1,0 +1,14 @@
+{
+  "asset_id": "ravenmail:entity/raven/raven_gold",
+  "asset_id_baby": "ravenmail:entity/raven/baby/raven_gold",
+  "color": 5513247,
+  "spawn_conditions": [
+    {
+      "condition": {
+        "type": "ravenmail:chance",
+        "chance": 0.0
+      },
+      "priority": 1
+    }
+  ]
+}

@@ -10,29 +10,29 @@ import java.util.List;
 
 public class AttackPestGoal extends Goal {
     Raven raven;
-    Class<? extends Entity> entityClass;
-    Entity targetedEntity;
+    Class<? extends Entity> pest;
+    Entity targetedPest;
 
-    public AttackPestGoal(Raven raven, Class<? extends Entity> entityClass) {
+    public AttackPestGoal(Raven raven, Class<? extends Entity> pest) {
         this.raven = raven;
-        this.entityClass = entityClass;
+        this.pest = pest;
     }
 
     @Override
     public boolean canUse() {
-        List<? extends Entity> itemEntities = raven.level().getEntitiesOfClass(entityClass, raven.getBoundingBox().inflate(10));
+        List<? extends Entity> itemEntities = raven.level().getEntitiesOfClass(pest, raven.getBoundingBox().inflate(10));
         if (itemEntities.isEmpty()) return false;
-        targetedEntity = itemEntities.get(0);
+        targetedPest = itemEntities.get(0);
         return true;
     }
 
     @Override
     public void tick() {
-        if (targetedEntity != null && targetedEntity.isAlive()) {
-            raven.getNavigation().createPath(targetedEntity, 1);
-            if (raven.distanceTo(targetedEntity) < 1) {
+        if (targetedPest != null && targetedPest.isAlive()) {
+            raven.getNavigation().createPath(targetedPest, 1);
+            if (raven.distanceTo(targetedPest) < 1) {
                 raven.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 100 ,0));
-                targetedEntity.discard();
+                targetedPest.discard();
             }
         }
         super.tick();

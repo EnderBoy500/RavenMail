@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 public class RavenRenderState extends LivingEntityRenderState {
     private static final Identifier DEFAULT_TEXTURE = RavenVariants.BLACK.identifier();
     public Identifier texture;
+    public Identifier textureBaby;
     public boolean isSitting;
     public boolean flying;
     public final ItemStackRenderState heldItem = new ItemStackRenderState();

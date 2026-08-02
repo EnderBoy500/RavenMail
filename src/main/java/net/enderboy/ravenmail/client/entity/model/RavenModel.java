@@ -2,9 +2,11 @@
 // Exported for Minecraft version 1.17+ for Yarn
 // Paste this class into your mod and generate all required imports
 
-package net.enderboy.ravenmail.client.entity;
+package net.enderboy.ravenmail.client.entity.model;
 
 import net.enderboy.ravenmail.RavenMail;
+import net.enderboy.ravenmail.client.entity.RavenAnimations;
+import net.enderboy.ravenmail.client.entity.RavenRenderState;
 import net.minecraft.client.animation.KeyframeAnimation;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
