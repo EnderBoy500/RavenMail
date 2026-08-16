@@ -11,7 +11,7 @@
 		"homepage": "https://modrinth.com/mod/raven-mail",
 		"issues": "https://github.com/EnderBoy500/Issues/issues"
 	},
-	"license": "MIT",
+	"license": "EBMC-1A",
 	"icon": "assets/ravenmail/icon.png",
 	"environment": "*",
 	"accessWidener": "ravenmail.accesswidener",

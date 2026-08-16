@@ -301,6 +301,12 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
     }
 
     @Override
+    protected void triggerOnDeathMobEffects(ServerLevel serverLevel, RemovalReason removalReason) {
+        super.triggerOnDeathMobEffects(serverLevel, removalReason);
+        drop(inventory.getItem(0).copy(), false,false);
+    }
+
+    @Override
     public boolean isFood(ItemStack itemStack) {
         return itemStack.is(RavenMailContent.RAVEN_FOOD);
     }
