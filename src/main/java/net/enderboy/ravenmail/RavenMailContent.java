@@ -1,14 +1,15 @@
 package net.enderboy.ravenmail;
 
+import io.github.ciph3rj.cipherlib.helper.RegistryHelper;
 import net.enderboy.ravenmail.entity.Raven;
 import net.enderboy.ravenmail.entity.RavenVariant;
-import net.enderboy500.enderlib.helper.RegistryHelper;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricTrackedDataRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -17,10 +18,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.SpawnPlacementTypes;
-import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -30,7 +28,7 @@ import net.minecraft.world.phys.Vec3;
 
 
 public interface RavenMailContent {
-    EntityType<Raven> RAVEN = RegistryHelper.registerEntity("raven", EntityType.Builder.of(Raven::new, MobCategory.CREATURE)
+    EntityType<Raven> RAVEN = registerEntity("raven", EntityType.Builder.of(Raven::new, MobCategory.CREATURE)
             .sized(0.5F, 0.5F)
             .eyeHeight(0.321F)
             .passengerAttachments(new Vec3(0.0, 0.7, -0.1))
@@ -58,13 +56,18 @@ public interface RavenMailContent {
         SpawnPlacements.register(RAVEN, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules);
     }
 
+    static <T extends Entity> EntityType<T> registerEntity(String path, EntityType.Builder<T> type) {
+        var key = ResourceKey.create(Registries.ENTITY_TYPE, RavenMail.id(path));
+        return Registry.register(BuiltInRegistries.ENTITY_TYPE, key, type.build(key));
+    }
+
     static <T> EntityDataSerializer<T> of(String name, StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
         var handler = EntityDataSerializer.forValueType(codec);
         FabricTrackedDataRegistry.register(RavenMail.id(name), handler);
         return handler;
     }
     static <T> ResourceKey<Registry<T>> createRegistryKey(String string) {
-        return ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(RavenMail.MOD_ID,string));
+        return ResourceKey.createRegistryKey(Identifier.parse(string));
     }
 
     static void load() {

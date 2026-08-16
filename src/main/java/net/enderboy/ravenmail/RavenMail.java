@@ -1,9 +1,9 @@
 package net.enderboy.ravenmail;
 
 import com.mojang.serialization.MapCodec;
+import io.github.ciph3rj.cipherlib.Cipher;
 import net.enderboy.ravenmail.data.ChanceSpawnCondition;
 import net.enderboy.ravenmail.entity.Raven;
-import net.enderboy500.enderlib.ELib;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -31,7 +31,7 @@ public class RavenMail implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Initializing Raven Mail");
 
-		ELib.addModId(MOD_ID);
+		Cipher.addModId(MOD_ID);
 
 		RavenMailContent.load();
 		ofSpawnCondition("chance", ChanceSpawnCondition.CODEC);
