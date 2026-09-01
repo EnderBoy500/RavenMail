@@ -1,8 +1,11 @@
 package net.enderboy.ravenmail;
 
 import io.github.ciph3rj.cipherlib.helper.RegistryHelper;
+import net.enderboy.ravenmail.block.RavenEggBlock;
+import net.enderboy.ravenmail.block.RavenEggBlockEntity;
 import net.enderboy.ravenmail.entity.Raven;
 import net.enderboy.ravenmail.entity.RavenVariant;
+import net.enderboy.ravenmail.item.RavenEggItem;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricTrackedDataRegistry;
@@ -23,6 +26,10 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 
@@ -36,6 +43,9 @@ public interface RavenMailContent {
 
     Item RAVEN_SPAWN_EGG = Items.registerSpawnEgg(RAVEN);
 
+    Block RAVEN_EGG = RegistryHelper.registerBlock("raven_egg", RavenEggBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.SNIFFER_EGG));
+    BlockEntityType<RavenEggBlockEntity> RAVEN_EGG_BE = (BlockEntityType<RavenEggBlockEntity>) RegistryHelper.registerBlockEntity("raven_egg", RavenEggBlockEntity::new, RAVEN_EGG);
+
     ResourceKey<Registry<RavenVariant>> RAVEN_VARIANT = createRegistryKey("raven_variant");
     EntityDataSerializer<Holder<RavenVariant>> RAVEN_VARIANT_DATA = of("raven_variant", RavenVariant.STREAM_CODEC);
     DataComponentType<Holder<RavenVariant>> RAVEN_VARIANT_COMPONENT = RegistryHelper.registerDataComponent("raven/variant", (builder) -> builder.persistent(RavenVariant.ENTRY_CODEC).networkSynchronized(RavenVariant.STREAM_CODEC));
@@ -45,10 +55,14 @@ public interface RavenMailContent {
     TagKey<Item> RAVEN_ATTRACTED_TO = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(RavenMail.MOD_ID, "raven_attracted_to"));
     TagKey<Item> CAN_BE_GIVEN_TO_RAVEN = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(RavenMail.MOD_ID, "can_be_given_to_raven"));
 
+    TagKey<Block> SUITABLE_FOR_RAVEN_EGGS = TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(RavenMail.MOD_ID, "suitable_for_raven_eggs"));
+
     TagKey<Biome> HAS_RAVENS = TagKey.create(Registries.BIOME, Identifier.fromNamespaceAndPath(RavenMail.MOD_ID, "has_ravens"));
 
     SoundEvent RAVEN_AMBIENCE = RegistryHelper.registerSound("raven_hurt");
     SoundEvent RAVEN_HURT = RegistryHelper.registerSound("raven_ambience");
+
+    Item RAVEN_EGG_ITEM = RegistryHelper.registerItem("raven_egg", RavenEggItem::new, new Item.Properties());
 
     static void addRavenSpawns() {
         BiomeModifications.addSpawn(biomeSelector -> biomeSelector.hasTag(HAS_RAVENS), MobCategory.CREATURE, RAVEN,

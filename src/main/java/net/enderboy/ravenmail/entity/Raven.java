@@ -29,6 +29,7 @@ import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.FlyingAnimal;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Silverfish;
 import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.entity.player.Player;
@@ -36,6 +37,8 @@ import net.minecraft.world.entity.variant.SpawnContext;
 import net.minecraft.world.entity.variant.VariantUtils;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,7 +57,7 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
     private static final EntityDimensions BABY_DIMENSIONS = RavenMailContent.RAVEN.getDimensions().scale(0.7F).withEyeHeight(0.24F);
     private final SimpleContainer inventory = new SimpleContainer(1);
     private static final ResourceKey<RavenVariant> DEFAULT_VARIANT;
-    private static final EntityDataAccessor<Holder<RavenVariant>> DATA_VARIANT_ID;
+    public static final EntityDataAccessor<Holder<RavenVariant>> DATA_VARIANT_ID;
     public static final EntityDataAccessor<ItemStack> HELD_ITEM = SynchedEntityData.defineId(Raven.class, EntityDataSerializers.ITEM_STACK);
 
     public Raven(EntityType<? extends TamableAnimal> entityType, Level level) {
@@ -332,6 +335,23 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
         }
 
         return raven;
+    }
+
+    @Override
+    public void spawnChildFromBreeding(ServerLevel serverLevel, Animal animal) {
+        ItemStack itemStack = new ItemStack(RavenMailContent.RAVEN_EGG_ITEM);
+        ItemEntity itemEntity = new ItemEntity(serverLevel, this.position().x(), this.position().y(), this.position().z(), itemStack);
+        itemEntity.setDefaultPickUpDelay();
+        if (random.nextBoolean()) {
+            itemStack.set(RavenMailContent.RAVEN_VARIANT_COMPONENT, getVariant());
+            itemStack.set(DataComponents.DYED_COLOR, new DyedItemColor(getVariant().value().color()));
+        } else {
+            itemStack.set(RavenMailContent.RAVEN_VARIANT_COMPONENT, animal.getEntityData().get(DATA_VARIANT_ID));
+            itemStack.set(DataComponents.DYED_COLOR, new DyedItemColor(animal.getEntityData().get(DATA_VARIANT_ID).value().color()));
+        }
+        this.finalizeSpawnChildFromBreeding(serverLevel, animal, (AgeableMob)null);
+        this.playSound(SoundEvents.SNIFFER_EGG_PLOP, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.5F);
+        serverLevel.addFreshEntity(itemEntity);
     }
 
     @Override

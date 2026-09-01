@@ -30,15 +30,15 @@ public class RavenVariantProvider extends FabricDynamicRegistryProvider {
     }
 
     public static void register(BootstrapContext<RavenVariant> registerable) {
-        of(registerable, RavenVariants.BLACK,0x222130, 20/50f);
-        of(registerable, RavenVariants.GRAY, 0x393B43,15/50f);
+        of(registerable, RavenVariants.BLACK,0x454551, 20/50f);
+        of(registerable, RavenVariants.GRAY, 0x777982,15/50f);
         of(registerable, RavenVariants.WHITE, 0xB4B1B4, 7/50f);
         of(registerable, RavenVariants.ALBINO, 0xE3E0E3,2/50f);
-        of(registerable, RavenVariants.BROWN, 0x2F2829,6/50f);
-        of(registerable, RavenVariants.BLUE, 0x171942,2/50f);
-        of(registerable, RavenVariants.PURPLE, 0x442A54,0f);
-        of(registerable, RavenVariants.RED, 0x54201F,0f);
-        of(registerable, RavenVariants.GOLD, 0x54201F,0f);
+        of(registerable, RavenVariants.BROWN, 0x7F625D,6/50f);
+        of(registerable, RavenVariants.BLUE, 0x62649E,2/50f);
+        of(registerable, RavenVariants.PURPLE, 0x8C7899,0f);
+        of(registerable, RavenVariants.RED, 0xA85050,0f);
+        of(registerable, RavenVariants.GOLD, 16366681,0f);
     }
 
     private static void of(BootstrapContext<RavenVariant> registry, ResourceKey<RavenVariant> key,int color,float f) {

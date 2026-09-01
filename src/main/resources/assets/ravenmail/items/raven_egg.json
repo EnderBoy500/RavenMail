@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "ravenmail:item/raven_egg",
+    "tints": [
+      {
+        "type": "minecraft:dye",
+        "default": 4539729
+      }
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "ravenmail:block/raven_egg"
+    }
+  }
+}
