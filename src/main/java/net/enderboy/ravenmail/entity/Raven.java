@@ -39,6 +39,8 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
+import net.minecraft.world.item.consume_effects.ConsumeEffect;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -83,7 +85,7 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new TamableAnimal.TamableAnimalPanicGoal(1.25));
+        this.goalSelector.addGoal(0, new TamableAnimalPanicGoal(1.25));
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(0, new RandomSwimmingGoal(this,1,1));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 2, true));
@@ -94,8 +96,8 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
         this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 1, 5, 1));
         this.goalSelector.addGoal(2, new RavenWanderGoal(this, 1));
         this.goalSelector.addGoal(0, new BreedGoal(this, 1));
-        this.goalSelector.addGoal(1, new SearchAndCollectItemGoal(this));
-        this.goalSelector.addGoal(2, new AttackPestGoal(this, Silverfish.class));
+        this.goalSelector.addGoal(0, new SearchAndCollectItemGoal(this));
+        this.goalSelector.addGoal(1, new AttackPestGoal(this, Silverfish.class));
         this.goalSelector.addGoal(3, new FollowMobGoal(this, 1, 3, 7));
     }
 
@@ -257,6 +259,11 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
                 if (this.isFood(itemStack) && this.getHealth() < this.getMaxHealth()) {
                     FoodProperties foodProperties = itemStack.get(DataComponents.FOOD);
                     this.heal(foodProperties != null ? 2 * foodProperties.nutrition() : 1.0F);
+                    if (itemStack.has(DataComponents.CONSUMABLE) && itemStack.get(DataComponents.CONSUMABLE).onConsumeEffects().contains(ConsumeEffect.Type.APPLY_EFFECTS)) {
+                        for (ConsumeEffect effect : itemStack.get(DataComponents.CONSUMABLE).onConsumeEffects()) {
+                            effect.apply(level(), itemStack, this);
+                        }
+                    }
                     this.usePlayerItem(player, interactionHand, itemStack);
                     this.playEatingSound();
                     return InteractionResult.SUCCESS;
@@ -287,11 +294,6 @@ public class Raven extends TamableAnimal implements InventoryCarrier, FlyingAnim
         return RavenMailContent.RAVEN_HURT;
     }
 
-    @Override
-    protected void dropAllDeathLoot(ServerLevel serverLevel, DamageSource damageSource) {
-        drop(inventory.getItem(0).copy(), false, false);
-        super.dropAllDeathLoot(serverLevel, damageSource);
-    }
 
     @Override
     public boolean hurtServer(ServerLevel serverLevel, DamageSource damageSource, float f) {

@@ -1,7 +1,6 @@
 package net.enderboy.ravenmail;
 
 import com.mojang.serialization.MapCodec;
-import io.github.ciph3rj.cipherlib.Cipher;
 import net.enderboy.ravenmail.data.ChanceSpawnCondition;
 import net.enderboy.ravenmail.entity.Raven;
 import net.fabricmc.api.ModInitializer;
@@ -16,6 +15,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.variant.SpawnCondition;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Items;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,13 +31,14 @@ public class RavenMail implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Initializing Raven Mail");
 
-		Cipher.addModId(MOD_ID);
-
 		RavenMailContent.load();
 		ofSpawnCondition("chance", ChanceSpawnCondition.CODEC);
 
 		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.SPAWN_EGGS).register(entries -> {
 			entries.accept(RavenMailContent.RAVEN_SPAWN_EGG);
+		});
+		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.INGREDIENTS).register(entries -> {
+			entries.addAfter(Items.BLUE_EGG, RavenMailContent.RAVEN_EGG);
 		});
 
 		FabricDefaultAttributeRegistry.register(RavenMailContent.RAVEN, Raven.createAttributes());

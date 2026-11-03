@@ -4,6 +4,7 @@ import net.enderboy.ravenmail.entity.Raven;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class AttackPestGoal extends Goal {
     public boolean canUse() {
         List<? extends Entity> itemEntities = raven.level().getEntitiesOfClass(pest, raven.getBoundingBox().inflate(10));
         if (itemEntities.isEmpty()) return false;
-        targetedPest = itemEntities.get(0);
+        targetedPest = itemEntities.getFirst();
         return true;
     }
 

@@ -2,6 +2,7 @@
   "item.ravenmail.raven_spawn_egg": "Raven Spawn Egg",
   "item.ravenmail.raven_egg": "Raven Egg",
   "block.ravenmail.raven_egg": "Raven Egg",
+  "block.ravenmail.raven_egg.noraven": "Will not hatch into a raven",
 
   "entity.ravenmail.raven": "Raven",
 

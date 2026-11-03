@@ -1,12 +1,11 @@
 package net.enderboy.ravenmail.block;
 
 import com.mojang.serialization.MapCodec;
-import io.github.ciph3rj.cipherlib.util.ItemUtils;
 import net.enderboy.ravenmail.RavenMailContent;
 import net.enderboy.ravenmail.entity.Raven;
+import net.enderboy500.enderlib.util.EItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -14,25 +13,22 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.animal.sniffer.Sniffer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
-
-import java.util.List;
 
 public class RavenEggBlock extends BaseEntityBlock {
     public static final MapCodec<RavenEggBlock> CODEC = simpleCodec(RavenEggBlock::new);
@@ -80,7 +76,7 @@ public class RavenEggBlock extends BaseEntityBlock {
 
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos blockPos, BlockState blockState, Player player) {
-        if (!ItemUtils.hasEnchantment(player.getMainHandItem(), "silk_touch")) return super.playerWillDestroy(level, blockPos, blockState, player);
+        if (!EItemUtils.hasEnchantment(player.getMainHandItem(), "silk_touch")) return super.playerWillDestroy(level, blockPos, blockState, player);
         if (level.getBlockEntity(blockPos) != null &&level.getBlockEntity(blockPos) instanceof RavenEggBlockEntity ravenEggBlockEntity) {
             ItemStack stack = new ItemStack(RavenMailContent.RAVEN_EGG_ITEM);
             ItemEntity itemEntity = new ItemEntity(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), stack);
