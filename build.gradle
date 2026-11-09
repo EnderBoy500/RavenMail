@@ -31,7 +31,7 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	modImplementation "maven.modrinth:cipherlib:${project.ciph3r_version}"
+	modImplementation "maven.modrinth:enderlib:${project.enderlib_version}"
 }
 
 processResources {
